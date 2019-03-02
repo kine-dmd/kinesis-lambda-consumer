@@ -10,3 +10,14 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# JetBrains IDEs
+.idea/
+
+# Go Dep dependencies
+vendor/
+
+# Data files
+*.bin
+*.csv
+*.parquet
