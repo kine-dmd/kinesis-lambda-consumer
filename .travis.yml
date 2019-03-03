@@ -1,0 +1,14 @@
+language: go
+
+go:
+  - 1.10.x
+
+deploy:
+  provider: lambda
+  function_name: "apple-watch-3-kinesis-consumer"
+  region: "eu-west-2"
+  role: "arn:aws:iam::736634562271:role/lambda-consumers"
+  runtime: "go1.x"
+  handler_name: "main"
+  on:
+    branch: master
