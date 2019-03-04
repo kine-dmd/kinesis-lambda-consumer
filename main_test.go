@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/binary"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
@@ -9,10 +10,7 @@ import (
 	"testing"
 )
 
-func createKinesisEvent() events.KinesisEvent {
-	// Make some raw bindary data
-	rawData := createRawData()
-
+func createKinesisEvent(rawData []byte) events.KinesisEvent {
 	// Add the raw data to a JSON object
 	preSend := unparsedAppleWatch3Data{
 		WatchPosition: watchPosition{"uuid1", 1},
@@ -52,6 +50,31 @@ func createRawData() []byte {
 	return rawData
 }
 
-func TestLambdaHandler(*testing.T) {
-	lambdaMain(nil, createKinesisEvent())
+func TestLambdaMain(t *testing.T) {
+	lambdaMain(nil, createKinesisEvent(createRawData()))
+}
+
+func TestExtractKinesisData(t *testing.T) {
+	// Create a kinesis event with the raw data used twice
+	rawData := createRawData()
+	kinesisEvent := createKinesisEvent(rawData)
+
+	// Extract the raw data from the kinesis event
+	halfParsedData := extractKinesisData(kinesisEvent)
+
+	// Check there are exactly two outputs
+	const expectedNumRecords = 2
+	if len(halfParsedData) != expectedNumRecords {
+		t.Errorf("Did not extract exactly 2 records")
+	}
+
+	// Check the first output
+	if bytes.Compare(rawData, halfParsedData[0].RawData) != 0 {
+		t.Errorf("First extracted data set was not equal to input")
+	}
+
+	// Check the second output
+	if bytes.Compare(rawData, halfParsedData[0].RawData) != 0 {
+		t.Errorf("Second extracted data set was not equal to input")
+	}
 }

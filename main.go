@@ -55,8 +55,7 @@ func main() {
 
 func lambdaMain(_ context.Context, event events.KinesisEvent) {
 	// Decode the data
-	encodedJSON := extractKinesisData(event)
-	halfParsedData := decodeJSON(encodedJSON)
+	halfParsedData := extractKinesisData(event)
 	parsedData := decodeBinaryWatchData(halfParsedData)
 
 	// Combine the data into one per user-limb
@@ -66,7 +65,12 @@ func lambdaMain(_ context.Context, event events.KinesisEvent) {
 	compressAndSend(combined)
 }
 
-func extractKinesisData(event events.KinesisEvent) [][]byte {
+func extractKinesisData(event events.KinesisEvent) []unparsedAppleWatch3Data {
+	records := extractKinesisRecords(event)
+	return decodeJSON(records)
+}
+
+func extractKinesisRecords(event events.KinesisEvent) [][]byte {
 	// Make space to store the decoded data
 	decodedRecords := make([][]byte, len(event.Records))
 	for i, record := range event.Records {
