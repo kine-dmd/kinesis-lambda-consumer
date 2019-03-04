@@ -106,8 +106,32 @@ func TestDecodeBinaryData(t *testing.T) {
 
 	// Convert to the byte array and attempt to parse back
 	byteData := createByteRow(uIntData, floatData)
+	decodeAndCheckData(byteData, uIntData, t, floatData)
+}
+
+func TestDecodeBinaryDataWithCorruptedEnd(t *testing.T) {
+	// Make 11 random bits of data
+	var uIntData uint64 = rand.Uint64()
+	var floatData = make([]float64, 10)
+	for i := range floatData {
+		floatData[i] = rand.Float64()
+	}
+
+	// Make a row and then append some data to end to simulate cut off second row
+	byteData := createByteRow(uIntData, floatData)
+	byteData = append(byteData, make([]byte, 5)...)
+
+	decodeAndCheckData(byteData, uIntData, t, floatData)
+
+}
+
+func decodeAndCheckData(byteData []byte, uIntData uint64, t *testing.T, floatData []float64) {
 	watchRow := decodeBinaryData(byteData)
 
+	// Check the inputs and outputs match
+	if len(watchRow) != 1 {
+		t.Errorf("Wrong number of rows")
+	}
 	if watchRow[0].Ts != uIntData {
 		t.Errorf("Incorrect TS decoded")
 	}
