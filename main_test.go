@@ -68,6 +68,7 @@ func createRandomRawData() []byte {
 }
 
 func TestLambdaMain(t *testing.T) {
+	// Run a full end to end test of the lambda main
 	lambdaMain(nil, createKinesisEvent(createRandomRawData()))
 }
 
@@ -121,11 +122,12 @@ func TestDecodeBinaryDataWithCorruptedEnd(t *testing.T) {
 	byteData := createByteRow(uIntData, floatData)
 	byteData = append(byteData, make([]byte, 5)...)
 
+	// Check that the parsed rows has not been affected
 	decodeAndCheckData(byteData, uIntData, t, floatData)
-
 }
 
 func decodeAndCheckData(byteData []byte, uIntData uint64, t *testing.T, floatData []float64) {
+	// Try and deocde the data
 	watchRow := decodeBinaryData(byteData)
 
 	// Check the inputs and outputs match
@@ -165,4 +167,80 @@ func decodeAndCheckData(byteData []byte, uIntData uint64, t *testing.T, floatDat
 	if watchRow[0].Hr != floatData[9] {
 		t.Errorf("Incorrect HR decoded")
 	}
+}
+
+func TestCombineDataDifferentLimbs(t *testing.T) {
+	// Make a list of parsed data from same user but different limbs
+	parsed := []parsedAppleWatch3Data{createParsedWatchData("a", 1),
+		createParsedWatchData("a", 2)}
+
+	// Try combining the data
+	combined := combineData(parsed)
+
+	// Check there are three outputs
+	if len(combined) != 2 {
+		t.Errorf("Incorrect number of unique id-limb pairs")
+	}
+
+	// Check rows have not been internally combined
+	if len(combined[0].StructuredData) != 1 {
+		t.Errorf("Incorrect number of rows in first parsed watch data.")
+	}
+	if len(combined[1].StructuredData) != 1 {
+		t.Errorf("Incorrect number of rows in second parsed watch data.")
+	}
+}
+
+func TestCombineDataSameLimbs(t *testing.T) {
+	// Make a list of parsed data from same user but different limbs
+	parsed := []parsedAppleWatch3Data{createParsedWatchData("a", 1),
+		createParsedWatchData("a", 1)}
+
+	// Try combining the data
+	combined := combineData(parsed)
+
+	// Check there are three outputs
+	if len(combined) != 1 {
+		t.Errorf("Incorrect number of unique id-limb pairs")
+	}
+
+	// Check rows have not been internally combined
+	if len(combined[0].StructuredData) != 2 {
+		t.Errorf("Incorrect number of rows in combined data.")
+	}
+}
+
+func TestCombineDataMultiUsers(t *testing.T) {
+	// Make a list of parsed data from same user but different limbs
+	parsed := []parsedAppleWatch3Data{createParsedWatchData("a", 1),
+		createParsedWatchData("b", 1),
+		createParsedWatchData("a", 1)}
+
+	// Try combining the data
+	combined := combineData(parsed)
+
+	// Check there are three outputs
+	if len(combined) != 2 {
+		t.Errorf("Incorrect number of unique id-limb pairs")
+	}
+
+	// Check rows have not been internally combined
+	if len(combined[0].StructuredData) != 2 && combined[0].WatchPosition.PatientID == "a" {
+		t.Errorf("Incorrect number of rows in combined data.")
+	}
+	if len(combined[0].StructuredData) != 1 && combined[0].WatchPosition.PatientID == "b" {
+		t.Errorf("Incorrect number of rows in combined data.")
+	}
+}
+
+func createParsedWatchData(s string, n int) parsedAppleWatch3Data {
+	// Use the same number (n) and same string (s) for all values
+	f := float64(n)
+	row := appleWatch3Row{uint64(n), f, f, f, f, f, f, f, f, f, f}
+
+	// Make a watch position
+	position := watchPosition{s, uint8(n)}
+
+	// Combine the two to make a completed parsed watch data
+	return parsedAppleWatch3Data{position, []appleWatch3Row{row}}
 }

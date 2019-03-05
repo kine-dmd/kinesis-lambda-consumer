@@ -163,6 +163,7 @@ func combineData(watchData []parsedAppleWatch3Data) []parsedAppleWatch3Data {
 	i := 0
 	for _, val := range m {
 		combined[i] = *val
+		i++
 	}
 	return combined
 }
