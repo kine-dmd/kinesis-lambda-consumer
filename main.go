@@ -177,7 +177,7 @@ func compressAndSend(allData []parsedAppleWatch3Data) {
 		timestamp := time.Now().UnixNano()
 		commonFilename := fmt.Sprintf("%s-%d-%d.parquet", data.WatchPosition.PatientID, data.WatchPosition.Limb, timestamp)
 		localFilename := fmt.Sprintf("/tmp/%s", commonFilename)
-		s3Filename := fmt.Sprintf("%s/%s", data.WatchPosition.PatientID, commonFilename)
+		s3Filename := fmt.Sprintf("%s/%d/%s", data.WatchPosition.PatientID, data.WatchPosition.Limb, commonFilename)
 
 		// Write the data to a parquet file
 		file, writer := createParquetFile(localFilename)
