@@ -54,6 +54,7 @@ func main() {
 }
 
 func lambdaMain(_ context.Context, event events.KinesisEvent) {
+	log.Fatal("Entered lambda main!")
 	// Decode the data
 	halfParsedData := extractKinesisData(event)
 	parsedData := decodeBinaryWatchData(halfParsedData)

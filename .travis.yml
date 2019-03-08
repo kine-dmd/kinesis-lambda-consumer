@@ -10,5 +10,8 @@ deploy:
   role: "arn:aws:iam::736634562271:role/lambda-consumers"
   runtime: "go1.x"
   handler_name: "main"
+  module_name: "main"
+  timeout: 60
+  memory_szie: 256
   on:
-    branch: master
+    branch: cd_testing
