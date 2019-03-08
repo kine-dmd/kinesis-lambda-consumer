@@ -3,12 +3,20 @@ language: go
 go:
   - 1.10.x
 
+after_success:
+  - GOOS=linux GOARCH=amd64 go build -o main.lambdaMain main.go
+  - zip main.zip main.lambdaMain
+
 deploy:
   provider: lambda
   function_name: "apple-watch-3-kinesis-consumer"
   region: "eu-west-2"
   role: "arn:aws:iam::736634562271:role/lambda-consumers"
   runtime: "go1.x"
-  handler_name: "main"
+  handler_name: "lambdaMain"
+  module_name: "main"
+  timeout: 60
+  zip: "main.zip"
+  memory_size: 256
   on:
     branch: master
