@@ -13,8 +13,8 @@ deploy:
   region: "eu-west-2"
   role: "arn:aws:iam::736634562271:role/lambda-consumers"
   runtime: "go1.x"
-  handler_name: "main"
-  module_name: ""
+  handler_name: "lambdaMain"
+  module_name: "main"
   timeout: 60
   zip: "main.zip"
   memory_size: 256
