@@ -69,8 +69,7 @@ func createRandomRawData() []byte {
 
 func TestLambdaMain(t *testing.T) {
 	// Run a full end to end test of the lambda main
-	//lambdaMain(nil, createKinesisEvent(createRandomRawData()))
-	t.Skip()
+	lambdaMain(nil, createKinesisEvent(createRandomRawData()))
 }
 
 func TestExtractKinesisData(t *testing.T) {
