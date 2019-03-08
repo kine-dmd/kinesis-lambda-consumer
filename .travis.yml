@@ -5,7 +5,7 @@ go:
 
 after_success:
   - GOOS=linux GOARCH=amd64 go build -o main.lambdaMain main.go
-  - zip main.zip main
+  - zip main.zip main.lambdaMain
 
 deploy:
   provider: lambda
