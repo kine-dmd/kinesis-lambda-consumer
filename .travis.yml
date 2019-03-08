@@ -19,4 +19,4 @@ deploy:
   zip: "main.zip"
   memory_size: 256
   on:
-    branch: cd_testing
+    branch: master
