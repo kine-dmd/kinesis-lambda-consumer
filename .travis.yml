@@ -4,7 +4,7 @@ go:
   - 1.10.x
 
 after_success:
-  - GOOS=linux GOARCH=amd64 go build -o main main.go
+  - GOOS=linux GOARCH=amd64 go build -o main.lambdaMain main.go
   - zip main.zip main
 
 deploy:
