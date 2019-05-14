@@ -40,8 +40,8 @@ type unparsedAppleWatch3Data struct {
 }
 
 type parsedAppleWatch3Data struct {
-	WatchPosition  watchPosition    `json:"WatchPosition"`
-	StructuredData []appleWatch3Row `json:"RawData"`
+	WatchPosition  watchPosition
+	StructuredData []appleWatch3Row
 }
 
 type watchPosition struct {
@@ -57,9 +57,13 @@ func lambdaMain(_ context.Context, event events.KinesisEvent) {
 	// Decode the data
 	halfParsedData := extractKinesisData(event)
 	parsedData := decodeBinaryWatchData(halfParsedData)
+	log.Printf("Length of parsed data %d", len(parsedData))
+	log.Println(parsedData)
 
 	// Combine the data into one per user-limb
 	combined := combineData(parsedData)
+	log.Printf("Length of combined data %d", len(parsedData))
+	log.Println(combined)
 
 	// Write to parquet and transmit
 	compressAndSend(combined)

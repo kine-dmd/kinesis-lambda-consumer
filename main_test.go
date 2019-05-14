@@ -92,7 +92,7 @@ func TestExtractKinesisData(t *testing.T) {
 	}
 
 	// Check the second output
-	if bytes.Compare(rawData, halfParsedData[0].RawData) != 0 {
+	if bytes.Compare(rawData, halfParsedData[1].RawData) != 0 {
 		t.Errorf("Second extracted data set was not equal to input")
 	}
 }
