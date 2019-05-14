@@ -149,16 +149,16 @@ func decodeBinaryData(raw []byte) []appleWatch3Row {
 }
 
 func combineData(watchData []parsedAppleWatch3Data) []parsedAppleWatch3Data {
-	m := make(map[string]*parsedAppleWatch3Data)
+	m := make(map[string]parsedAppleWatch3Data)
 
 	// Concatenate any data from the same user's limb
 	for _, data := range watchData {
 		key := fmt.Sprintf("%s-%d", data.WatchPosition.PatientID, data.WatchPosition.Limb)
 		oldData, exists := m[key]
 		if exists {
-			m[key].StructuredData = append(oldData.StructuredData, data.StructuredData...)
+			m[key] = parsedAppleWatch3Data{oldData.WatchPosition, append(oldData.StructuredData, data.StructuredData...)}
 		} else {
-			m[key] = &data
+			m[key] = data
 		}
 	}
 
@@ -166,7 +166,7 @@ func combineData(watchData []parsedAppleWatch3Data) []parsedAppleWatch3Data {
 	combined := make([]parsedAppleWatch3Data, len(m))
 	i := 0
 	for _, val := range m {
-		combined[i] = *val
+		combined[i] = val
 		i++
 	}
 	return combined

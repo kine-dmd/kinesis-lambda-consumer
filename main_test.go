@@ -189,6 +189,10 @@ func TestCombineDataDifferentLimbs(t *testing.T) {
 	if len(combined[1].StructuredData) != 1 {
 		t.Errorf("Incorrect number of rows in second parsed watch data.")
 	}
+
+	if combined[0].WatchPosition == combined[1].WatchPosition {
+		t.Errorf("Watch positions have been merged and overwritten.")
+	}
 }
 
 func TestCombineDataSameLimbs(t *testing.T) {
