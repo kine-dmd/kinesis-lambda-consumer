@@ -3,6 +3,9 @@ language: go
 go:
   - 1.10.x
 
+install:
+  - dep ensure
+
 after_success:
   - GOOS=linux GOARCH=amd64 go build -o main.lambdaMain main.go
   - zip main.zip main.lambdaMain
