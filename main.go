@@ -16,7 +16,7 @@ import (
 	"log"
 	"math"
 	"os"
-	"sync"
+	"runtime"
 	"time"
 )
 
@@ -62,7 +62,7 @@ func lambdaMain(_ context.Context, event events.KinesisEvent) {
 	combined := combineData(parsedData)
 
 	// Write to parquet and transmit
-	compressAndSendAll(combined)
+	compressAndSend(combined)
 }
 
 func extractKinesisData(event events.KinesisEvent) []unparsedAppleWatch3Data {
@@ -168,35 +168,25 @@ func combineData(watchData []parsedAppleWatch3Data) []parsedAppleWatch3Data {
 	return combined
 }
 
-func compressAndSendAll(allData []parsedAppleWatch3Data) {
+func compressAndSend(allData []parsedAppleWatch3Data) {
 	// Create a reusable connection to the S3 bucket
 	s3Connection := createS3Connection()
-	wg := sync.WaitGroup{}
 
 	for _, data := range allData {
-		wg.Add(1)
-		go func() {
-			compressAndUploadSingleFile(data, s3Connection)
-			wg.Done()
-		}()
+		// Create unique filenames
+		timestamp := time.Now().UnixNano()
+		commonFilename := fmt.Sprintf("%s-%d-%d.parquet", data.WatchPosition.PatientID, data.WatchPosition.Limb, timestamp)
+		localFilename := fmt.Sprintf("/tmp/%s", commonFilename)
+		s3Filename := fmt.Sprintf("%s/%d/%s", data.WatchPosition.PatientID, data.WatchPosition.Limb, commonFilename)
+
+		// Write the data to a parquet file
+		file, writer := createParquetFile(localFilename)
+		writeDataToParquet(data.StructuredData, writer)
+		closeParquetFile(file, writer)
+
+		// Transmit the file to S3
+		uploadToS3(s3Connection, localFilename, s3Filename)
 	}
-	wg.Wait()
-}
-
-func compressAndUploadSingleFile(data parsedAppleWatch3Data, s3Connection *s3manager.Uploader) {
-	// Create unique filenames
-	timestamp := time.Now().UnixNano()
-	commonFilename := fmt.Sprintf("%s-%d-%d.parquet", data.WatchPosition.PatientID, data.WatchPosition.Limb, timestamp)
-	localFilename := fmt.Sprintf("/tmp/%s", commonFilename)
-	s3Filename := fmt.Sprintf("%s/%d/%s", data.WatchPosition.PatientID, data.WatchPosition.Limb, commonFilename)
-
-	// Write the data to a parquet file
-	file, writer := createParquetFile(localFilename)
-	writeDataToParquet(data.StructuredData, writer)
-	closeParquetFile(file, writer)
-
-	// Transmit the file to S3
-	uploadToS3(s3Connection, localFilename, s3Filename)
 }
 
 func createParquetFile(filename string) (ParquetFile.ParquetFile, *ParquetWriter.ParquetWriter) {
@@ -207,7 +197,8 @@ func createParquetFile(filename string) (ParquetFile.ParquetFile, *ParquetWriter
 	}
 
 	// Create a file writer for that file
-	parquetWriter, err := ParquetWriter.NewParquetWriter(fileWriter, new(appleWatch3Row), 1)
+	cpuThreads := int64(runtime.NumCPU())
+	parquetWriter, err := ParquetWriter.NewParquetWriter(fileWriter, new(appleWatch3Row), cpuThreads)
 	if err != nil {
 		log.Fatal("Unable to create parquet writer ", err)
 	}
