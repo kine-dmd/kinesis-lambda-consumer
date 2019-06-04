@@ -4,10 +4,10 @@ go:
   - 1.10.x
 
 before_install:
-  - RUN wget -O dep https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64
-  - RUN echo '287b08291e14f1fae8ba44374b26a2b12eb941af3497ed0ca649253e21ba2f83  dep' | sha256sum -c -
-  - RUN chmod +x dep
-  - RUN mv dep /usr/bin/
+  - wget -O dep https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64
+  - echo '287b08291e14f1fae8ba44374b26a2b12eb941af3497ed0ca649253e21ba2f83  dep' | sha256sum -c -
+  - chmod +x dep
+  - mv dep /usr/bin/
 
 
 install:
