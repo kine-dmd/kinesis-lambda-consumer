@@ -2,10 +2,22 @@
 
 
 [[projects]]
-  name = "git.apache.org/thrift.git"
+  name = "cloud.google.com/go"
+  packages = ["compute/metadata","iam","internal","internal/optional","internal/trace","internal/version","storage"]
+  revision = "0ebda48a7f143b1cce9eb37a8c1106ac762a3430"
+  version = "v0.34.0"
+
+[[projects]]
+  name = "github.com/BurntSushi/toml"
+  packages = ["."]
+  revision = "3012a1dbe2e4bd1391d42b32f0577cb7bbc7f005"
+  version = "v0.3.1"
+
+[[projects]]
+  name = "github.com/apache/thrift"
   packages = ["lib/go/thrift"]
-  revision = "384647d290e2e4a55a14b1b7ef1b7e66293a2c33"
-  version = "v0.12.0"
+  revision = "24918abba929282"
+  source = "github.com/apache/thrift"
 
 [[projects]]
   name = "github.com/aws/aws-lambda-go"
@@ -27,7 +39,7 @@
 
 [[projects]]
   name = "github.com/golang/protobuf"
-  packages = ["proto"]
+  packages = ["proto","protoc-gen-go","protoc-gen-go/descriptor","protoc-gen-go/generator","protoc-gen-go/generator/internal/remap","protoc-gen-go/grpc","protoc-gen-go/plugin","ptypes","ptypes/any","ptypes/duration","ptypes/timestamp"]
   revision = "b5d812f8a3706043e23a9cd5babf2e5423744d30"
   version = "v1.3.1"
 
@@ -38,19 +50,114 @@
   version = "v0.0.1"
 
 [[projects]]
+  name = "github.com/googleapis/gax-go"
+  packages = [".","v2"]
+  revision = "beaecbbdd8af86aa3acf14180d53828ce69400b2"
+  version = "v2.0.4"
+
+[[projects]]
+  name = "github.com/hashicorp/golang-lru"
+  packages = ["simplelru"]
+  revision = "7087cb70de9f7a8bc0a10c375cb0d2280a8edf9c"
+  version = "v0.5.1"
+
+[[projects]]
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
   revision = "c2b33e84"
 
 [[projects]]
-  branch = "v1.0"
+  name = "github.com/spf13/afero"
+  packages = [".","mem"]
+  revision = "588a75ec4f32903aa5e39a2619ba6a4631e28424"
+  version = "v1.2.2"
+
+[[projects]]
   name = "github.com/xitongsys/parquet-go"
   packages = ["Common","Compress","Layout","Marshal","ParquetEncoding","ParquetFile","ParquetType","ParquetWriter","SchemaHandler","parquet"]
-  revision = "6b890e969cbbd571d3af403e5a09fa8c305cc415"
+  revision = "faa3e256dd2077321358dc5f41c3f37a15154e6e"
+
+[[projects]]
+  name = "go.opencensus.io"
+  packages = [".","internal","internal/tagencoding","metric/metricdata","metric/metricproducer","plugin/ochttp","plugin/ochttp/propagation/b3","resource","stats","stats/internal","stats/view","tag","trace","trace/internal","trace/propagation","trace/tracestate"]
+  revision = "9c377598961b706d1542bd2d84d538b5094d596e"
+  version = "v0.22.0"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/exp"
+  packages = ["apidiff","cmd/apidiff"]
+  revision = "efd6b22b2522a48712e1fd0b3c1ab34d243f5245"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/lint"
+  packages = [".","golint"]
+  revision = "959b441ac422379a43da2230f62be024250818b0"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["context","context/ctxhttp","http/httpguts","http2","http2/hpack","idna","internal/timeseries","trace"]
+  revision = "60506f45cf65977eb3a9c6e30f995f54a721c271"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/oauth2"
+  packages = [".","google","internal","jws","jwt"]
+  revision = "0f29369cfe4552d0e4bcddc57cc75f4d7e672a33"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  revision = "4c4f7f33c9ed00de01c4c741d2177abfcfe19307"
+
+[[projects]]
+  name = "golang.org/x/text"
+  packages = ["collate","collate/build","internal/colltab","internal/gen","internal/language","internal/language/compact","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
+  revision = "342b2e1fbaa52c93f31447ad2c6abc048c63e475"
+  version = "v0.3.2"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/tools"
+  packages = ["cmd/goimports","go/ast/astutil","go/buildutil","go/gcexportdata","go/internal/cgo","go/internal/gcimporter","go/internal/packagesdriver","go/loader","go/packages","go/types/typeutil","internal/fastwalk","internal/gopathwalk","internal/imports","internal/module","internal/semver"]
+  revision = "8aaa1484dc108aa23dcf2d4a09371c0c9e280f6b"
+
+[[projects]]
+  name = "google.golang.org/api"
+  packages = ["gensupport","googleapi","googleapi/internal/uritemplates","googleapi/transport","internal","iterator","option","storage/v1","transport/http","transport/http/internal/propagation"]
+  revision = "721295fe20d585ce7e948146f82188429d14da33"
+  version = "v0.5.0"
+
+[[projects]]
+  name = "google.golang.org/appengine"
+  packages = [".","internal","internal/app_identity","internal/base","internal/datastore","internal/log","internal/modules","internal/remote_api","internal/urlfetch","urlfetch"]
+  revision = "4c25cacc810c02874000e4f7071286a8e96b2515"
+  version = "v1.6.0"
+
+[[projects]]
+  branch = "master"
+  name = "google.golang.org/genproto"
+  packages = ["googleapis/api/annotations","googleapis/iam/v1","googleapis/rpc/code","googleapis/rpc/status","googleapis/type/expr"]
+  revision = "fb225487d10142b5bcc35abfc6cb9a0609614976"
+
+[[projects]]
+  name = "google.golang.org/grpc"
+  packages = [".","balancer","balancer/base","balancer/roundrobin","binarylog/grpc_binarylog_v1","codes","connectivity","credentials","credentials/internal","encoding","encoding/proto","grpclog","internal","internal/backoff","internal/balancerload","internal/binarylog","internal/channelz","internal/envconfig","internal/grpcrand","internal/grpcsync","internal/syscall","internal/transport","keepalive","metadata","naming","peer","resolver","resolver/dns","resolver/passthrough","stats","status","tap"]
+  revision = "869adfc8d5a43efc0d05780ad109106f457f51e4"
+  version = "v1.21.0"
+
+[[projects]]
+  name = "honnef.co/go/tools"
+  packages = ["arg","callgraph","callgraph/static","cmd/staticcheck","config","deprecated","functions","internal/sharedcheck","lint","lint/lintdsl","lint/lintutil","lint/lintutil/format","simple","ssa","ssa/ssautil","ssautil","staticcheck","staticcheck/vrp","stylecheck","unused","version"]
+  revision = "95959eaf5e3c41c66151dcfd91779616b84077a8"
+  version = "2019.1.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d0fadf2dd9b8ea610d0ee50f9916e59a8aaa9ff4284f43f39a757785bea5d7f4"
+  inputs-digest = "d504430e94b8c0faa86fd9f3075996ed93fbac8d1bf4ec12d4bbf45e75437c37"
   solver-name = "gps-cdcl"
   solver-version = 1

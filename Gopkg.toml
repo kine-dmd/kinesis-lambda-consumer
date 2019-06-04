@@ -19,3 +19,7 @@
 # [[override]]
 #  name = "github.com/x/y"
 #  version = "2.4.0"
+
+[[constraint]]
+  name = "github.com/xitongsys/parquet-go"
+  revision = "faa3e256dd2077321358dc5f41c3f37a15154e6e"
