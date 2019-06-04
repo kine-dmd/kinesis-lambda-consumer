@@ -10,20 +10,10 @@ import (
 	"testing"
 )
 
+// Create the whole kinesis event from some raw data
 func createKinesisEvent(rawData []byte) events.KinesisEvent {
-	// Add the raw data to a JSON object
-	preSend := unparsedAppleWatch3Data{
-		WatchPosition: watchPosition{"uuid1", 1},
-		RawData:       rawData,
-	}
-	jsonEncoded, _ := json.Marshal(preSend)
-
-	// Add the JSON to AWS Kinesis records (can be many records per event)
-	ker := events.KinesisEventRecord{
-		Kinesis: events.KinesisRecord{
-			Data: jsonEncoded,
-		},
-	}
+	// Make a single Kinesis event record
+	ker := createKinesisEventRecord(rawData)
 
 	// Add two records to the event
 	return events.KinesisEvent{
@@ -31,6 +21,24 @@ func createKinesisEvent(rawData []byte) events.KinesisEvent {
 	}
 }
 
+// Wrap raw binary data in a kinesis event record (as performed by the kinesis SDKs)
+func createKinesisEventRecord(rawData []byte) events.KinesisEventRecord {
+	// Add the raw data to a JSON object
+	preSend := unparsedAppleWatch3Data{
+		WatchPosition: watchPosition{"uuid1", 1},
+		RawData:       rawData,
+	}
+	jsonEncoded, _ := json.Marshal(preSend)
+	// Add the JSON to AWS Kinesis records (can be many records per event)
+	ker := events.KinesisEventRecord{
+		Kinesis: events.KinesisRecord{
+			Data: jsonEncoded,
+		},
+	}
+	return ker
+}
+
+// Create a single watch data row using specific values
 func createByteRow(intData uint64, floatData []float64) []byte {
 	// Check data is correct size
 	if len(floatData) != 10 {
@@ -53,11 +61,12 @@ func createByteRow(intData uint64, floatData []float64) []byte {
 	return rawData
 }
 
+// Create random raw data as the watch would
 func createRandomRawData() []byte {
 	// Byte arrays for storage
 	var rawData = make([]byte, 0)
 	// Add row by row
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 10000; i++ {
 		var floatData = make([]float64, 10)
 		for j := range floatData {
 			floatData[j] = rand.Float64()
@@ -67,9 +76,21 @@ func createRandomRawData() []byte {
 	return rawData
 }
 
+func BenchmarkLambdaMain(b *testing.B) {
+	// Make a large number of records event payload
+	numRecords := 100
+	records := make([]events.KinesisEventRecord, numRecords)
+	for i := 0; i < numRecords; i++ {
+		records[i] = createKinesisEventRecord(createRandomRawData())
+	}
+
+	for n := 0; n < b.N; n++ {
+		lambdaMain(nil, events.KinesisEvent{Records: records})
+	}
+}
+
 func TestLambdaMain(t *testing.T) {
 	// Run a full end to end test of the lambda main
-	lambdaMain(nil, createKinesisEvent(createRandomRawData()))
 }
 
 func TestExtractKinesisData(t *testing.T) {
